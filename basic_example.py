@@ -1,21 +1,18 @@
-
-
-
 from twitterscraper import query_tweets
 import datetime as dt
 import pandas as pd
 import json
 
+#Build a class to call a custom scrap or to perform a default scrape
+#This will require methods which have certain default hash tags
 
 
 begin_date = dt.date.today()
 end_date = begin_date + dt.timedelta(days=1)
 data_folder = "JSONDataFiles/"
 
-
 limit = 1000
 lang = 'english'
-
 
 tweets = query_tweets('#sixnations', begindate = begin_date, enddate = end_date, limit = limit, lang = lang)
 
