@@ -1,0 +1,19 @@
+
+#Standard default implementation of docker-compose
+version: "3.7"
+services:
+  pythonserver:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        buildno: 1
+    volumes:
+      - /Users/fionnmcguire/Github/DataAnalysis:/DataAnalysis
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - webnet
+networks:
+  webnet:

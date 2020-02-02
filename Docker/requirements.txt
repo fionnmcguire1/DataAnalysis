@@ -1,0 +1,9 @@
+twitterscraper
+pandas
+numpy
+scipy
+Matplotlib
+Seaborn
+TensorFlow
+Keras
+Plotly
