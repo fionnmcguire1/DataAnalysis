@@ -7,69 +7,133 @@ class TwitterDataCollect(object):
         self.end_time = None
         self.destination = "JSONDataFiles/"
 
-    def buildMarkers(self,markers):
-
-        for mark in markers:
-            self.markers.append(str(mark))
-            self.markers.append("#"+str(mark))
+    #Accepts list of string values as parameter
+    def buildMarkers(self,markers=None):
+        if isinstance(markers,list):
+            for mark in markers:
+                if isinstance(mark,str):
+                    self.markers.append(str(mark))
+                    if "#" not in mark:
+                        self.markers.append("#"+str(mark))
+                else: return False
+        else: return False
+        return True
 
 
     def buildTimeFrame(self,mode,custom_start=None,custom_end=None):
+        import datetime as dt
 
-        #Mode 1 -> One Day Rush
-        # Get all from today
-        if mode == 1:
-            self.start_time  
-
-        #Mode 2 -> XI
-        #Data From the last 15 minutes
-
-        #Mode 3
-        #Data From the last week
-
-        #Mode 4
-        #Data from the last month
-
-        #Mode 5
-        #Data from the last year
-
-    def setLimit(limit=1000)
-
-    def setLang(lang='english')
-
-    def collectData()
-    from twitterscraper import query_tweets
-    import datetime as dt
-    import pandas as pd
-    import json
-
-    #Build a class to call a custom scrap or to perform a default scrape
-    #This will require methods which have certain default hash tags
+        if custom_start is None:
+            if mode == 1:
+                #Mode 1 -> One Day Rush
+                # Get all from today
+                self.end_time = self.start_time + dt.timedelta(days=1)
+                self.start_time = dt.datetime.today()
 
 
-    begin_date = dt.date.today()
-    end_date = begin_date + dt.timedelta(days=1)
-    data_folder = "JSONDataFiles/"
+            elif mode == 2:
+                #Mode 2 -> XI
+                #Data From the last 15 minutes
+                self.end_time =  dt.datetime.now()
+                self.start_time = self.end_time - dt.timedelta(minutes=15)
 
-    limit = 1000
-    lang = 'english'
+            elif mode == 3:
+                #Mode 3
+                #Data From the last week
+                self.end_time = dt.datetime.now()
+                self.start_time = dt.end_time - dt.timedelta(days=7)
 
-    tweets = query_tweets('#sixnations', begindate = begin_date, enddate = end_date, limit = limit, lang = lang)
+            elif mode == 4:
+                #Mode 4
+                #Data from the last month
+                self.end_time = dt.datetime.now()
+                self.start_time = dt.end_time - dt.timedelta(weeks=4)
 
-    #print(tweets[0].keys())
-    list_of_json_tweets = []
-    for tweet in tweets:
-            tweet_time = tweet.timestamp
-            tweet.timestamp = tweet_time.strftime('%Y-%m-%d %H:%M:%S')
-            list_of_json_tweets.append(vars(tweet))
+            elif mode == 5:
+                #Mode 5
+                #Data from the last year
+                self.end_time = dt.datetime.now()
+                self.start_time = dt.end_time - dt.timedelta(weeks=52)
+            else: return False
 
-    #df = pd.DataFrame(t._dict_ for t in tweets)
-    str_date = begin_date.strftime("%Y-%m-%d")
-    jsonfile = open(data_folder+str_date+".json","w")
-    length_of_tweet_list = len(list_of_json_tweets)
-    for index,item in enumerate(list_of_json_tweets):
-        json.dump(item,jsonfile)
-        if length_of_tweet_list-1 != index:
-            jsonfile.write(",")
+        else:
+            #Assign custom start and end dates
+            if 'datetime.datetime' in str(type(custom_start)) and 'datetime.datetime' in str(type(custom_end)):
+                self.start_time = custom_start
+                self.end_time = custom_end
+            else: return False
 
-    jsonfile.close()
+        return True
+
+    def setLimit(limit=1000):
+        if isinstance(limit, int) and limit > 0:
+            self.limit = limit
+            return True
+        else: return False
+
+    def setLang(lang='english'):
+        if isinstance(lang, str) and len(lang) > 0:
+            self.lang = lang
+            return True
+        else: return False
+
+    def collectData():
+        from twitterscraper import query_tweets
+        import datetime as dt
+        import json
+
+        #Build query string with all marker variations specified
+        query_str = ""
+        for marker in self.markers:
+            query_str+=marker+" "
+
+        #Collect data
+        tweets = query_tweets(query_str,begindate=self.start_time,enddate=start.end_time,limit=self.limit,lang=self.lang)
+
+
+        #Convert data into format that is jsonable
+        list_of_json_tweets = []
+        for tweet in tweets:
+                tweet_time = tweet.timestamp
+                tweet.timestamp = tweet_time.strftime('%Y-%m-%d %H:%M:%S')
+                list_of_json_tweets.append(vars(tweet))
+
+        #Write output
+        file_name = self.start_time.strftime("%Y-%m-%d")
+        jsonfile = open(self.destination+file_name+".json","w")
+        length_of_tweet_list = len(list_of_json_tweets)
+        length_of_tweet_list-=1
+        for index,item in enumerate(list_of_json_tweets):
+            json.dump(item,jsonfile)
+            if length_of_tweet_list != index:
+                json_file.write(",")
+
+        json_file.close()
+
+
+#Test calls
+test_collector = TwitterDataCollect()
+
+#Testing Build Markers method
+#Correct Case
+response = test_collector.buildMarkers(["#6nations","sixnations","france"])
+print(test_collector.markers)
+print(response)
+
+#Passing markers string instead of list
+test_collector = TwitterDataCollect()
+response = test_collector.buildMarkers("6 nations")
+print(test_collector.markers)
+print(response)
+
+#Passing markers int instead of list
+test_collector = TwitterDataCollect()
+response = test_collector.buildMarkers(5)
+print(test_collector.markers)
+print(response)
+
+#Passing markers empty parameters
+test_collector = TwitterDataCollect()
+response = test_collector.buildMarkers()
+print(test_collector.markers)
+print(response)
