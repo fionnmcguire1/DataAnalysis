@@ -9,10 +9,14 @@ class TwitterDataCollect(object):
 
     #Accepts list of string values as parameter
     def buildMarkers(self,markers=None):
+
+        #Check the input is a list
+        #Returns whether the input was valid or invalid 
         if isinstance(markers,list):
             for mark in markers:
                 if isinstance(mark,str):
                     self.markers.append(str(mark))
+                    #For all queries adds a hash tag varsion aswell
                     if "#" not in mark:
                         self.markers.append("#"+str(mark))
                 else: return False
