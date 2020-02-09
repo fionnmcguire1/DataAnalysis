@@ -1,3 +1,6 @@
 twitterscraper
 pandas
 pytest
+flask
+flask-sqlalchemy
+flask-migrate
