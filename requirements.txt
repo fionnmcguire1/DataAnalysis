@@ -2,5 +2,6 @@ twitterscraper
 pandas
 pytest
 flask
+python-dotenv
 flask-sqlalchemy
 flask-migrate
